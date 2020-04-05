@@ -9,7 +9,13 @@
 class UTankBarrelComponent;
 class UTankTurretComponent;
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UENUM()
+enum class EFiringStatus : uint8
+{
+	Reloading, Aiming, Locked
+};
+
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class BATTLETANK_API UTankAimingComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -25,8 +31,11 @@ public:
 
 	void AimAt(const FVector& HitLocation, float LaunchSpeed);
 
-private:
+protected:
+	UPROPERTY(BlueprintReadOnly, Category = "State")
+	EFiringStatus firingStatus = EFiringStatus::Reloading;
 
+private:
 	UTankBarrelComponent* Barrel = nullptr;
 	UTankTurretComponent* Turret = nullptr;
 

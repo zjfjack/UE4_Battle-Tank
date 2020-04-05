@@ -8,8 +8,6 @@
 void ATankPlayerController::BeginPlay()
 {
     Super::BeginPlay();
-    auto ControlledTank = GetControlledTank();
-    UE_LOG(LogTemp, Warning, TEXT("PlayerController possessing: %s"), *ControlledTank->GetName());
 }
 
 void ATankPlayerController::Tick(float DeltaTime)
@@ -35,6 +33,7 @@ bool ATankPlayerController::GetLookVectorHitLocation(const FVector& LookDirectio
 {
     FHitResult HitResult;
     FVector StartLocation = PlayerCameraManager->GetCameraLocation();
+    // Vector add
     FVector EndLocation = StartLocation + LookDirection * LineTraceRange;
 
     if (GetWorld()->LineTraceSingleByChannel(
