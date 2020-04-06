@@ -4,7 +4,6 @@
 #include "Engine/World.h"
 #include "Projectile.h"
 #include "TankBarrelComponent.h"
-#include "TankAimingComponent.h"
 #include "Tank.h"
 
 // Sets default values
@@ -12,13 +11,6 @@ ATank::ATank()
 {
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
-}
-
-void ATank::BeginPlay()
-{
-	Super::BeginPlay();
-
-	TankAimingComponent = FindComponentByClass<UTankAimingComponent>();
 }
 
 void ATank::Fire()
@@ -33,10 +25,4 @@ void ATank::Fire()
 		Barrel->GetProjectileSocketLocation(), 
 		Barrel->GetProjectileSocketRotation());
 	projectile->LaunchProjectile(LaunchSpeed);
-}
-
-void ATank::AimAt(const FVector& HitLocation)
-{
-	if (!ensure(TankAimingComponent)) return;
-	TankAimingComponent->AimAt(HitLocation, LaunchSpeed);
 }
