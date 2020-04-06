@@ -2,12 +2,16 @@
 
 
 #include "TankPlayerController.h"
+#include "TankAimingComponent.h"
 #include "Engine/World.h"
 #include "Tank.h"
 
 void ATankPlayerController::BeginPlay()
 {
     Super::BeginPlay();
+    auto AimingComponent = GetControlledTank()->FindComponentByClass<UTankAimingComponent>();
+    if (ensure(AimingComponent))
+        FoundAimingComponent(AimingComponent);
 }
 
 void ATankPlayerController::Tick(float DeltaTime)
@@ -40,8 +44,7 @@ bool ATankPlayerController::GetLookVectorHitLocation(const FVector& LookDirectio
         HitResult,
         StartLocation,
         EndLocation,
-        ECC_Visibility)
-        )
+        ECC_Visibility))
     {
         OutHitLocation = HitResult.Location;
         return true;
@@ -68,11 +71,12 @@ bool ATankPlayerController::GetSightRayHitLocation(FVector& OutHitLocation) cons
 
 void ATankPlayerController::AimTowardsCrosshair()
 {
-    if (!GetControlledTank()) return;
+    auto controlledTank = GetControlledTank();
+    if (!ensure(controlledTank)) return;
 
     FVector HitLocation;
 
     // If it hits the landscape, tell controlled tank to aim at this point
     if (GetSightRayHitLocation(HitLocation))
-        GetControlledTank()->AimAt(HitLocation);
+        controlledTank->AimAt(HitLocation);
 }
