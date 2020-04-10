@@ -17,6 +17,6 @@ class BATTLETANK_API ATankAIController : public AAIController
 private:
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditDefaultsOnly)
-	float AcceptanceRadius = 0;
+	UPROPERTY(EditDefaultsOnly, Category = "Setup")
+	float AcceptanceRadius = 3000;
 };
