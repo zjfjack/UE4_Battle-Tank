@@ -13,7 +13,7 @@ class AProjectile;
 UENUM()
 enum class EFiringStatus : uint8
 {
-	Reloading, Aiming, Locked
+	Reloading, Aiming, Locked, OutOfAmmo
 };
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -31,6 +31,9 @@ public:
 	void Fire();
 
 	EFiringStatus GetFiringState() const;
+
+	UFUNCTION(BlueprintCallable)
+	int GetAmmoLeft() const;
 	
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "State")
@@ -57,6 +60,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Firing")
 	float ReloadTimeInSeconds = 3;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Firing")
+	float AmmoLeft = 3;
 
 	double LastFireTime = 0;
 

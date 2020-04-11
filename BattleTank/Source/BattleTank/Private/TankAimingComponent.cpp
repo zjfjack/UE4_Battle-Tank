@@ -33,6 +33,11 @@ void UTankAimingComponent::TickComponent(float DeltaTime, enum ELevelTick TickTy
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	if (AmmoLeft == 0)
+	{
+		firingStatus = EFiringStatus::OutOfAmmo;
+		return;
+	}
 	bool bIsReloading = (FPlatformTime::Seconds() - LastFireTime) < ReloadTimeInSeconds;
 	if (bIsReloading)
 		firingStatus = EFiringStatus::Reloading;
@@ -47,12 +52,17 @@ EFiringStatus UTankAimingComponent::GetFiringState() const
 	return firingStatus;
 }
 
+int UTankAimingComponent::GetAmmoLeft() const
+{
+	return AmmoLeft;
+}
+
 bool UTankAimingComponent::IsBarrelMoving()
 {
 	if (!ensure(Barrel)) return false;
 	
 	auto BarrelForward = Barrel->GetForwardVector();
-	return !BarrelForward.Equals(AimDirection, 0.01);
+	return !BarrelForward.Equals(AimDirection, 0.1);
 }
 
 
@@ -74,7 +84,7 @@ void UTankAimingComponent::AimAt(const FVector& HitLocation)
 void UTankAimingComponent::Fire()
 {
 	if (!ensure(Barrel && ProjectileBlueprint)) return;
-	if (firingStatus == EFiringStatus::Reloading) return;
+	if (firingStatus == EFiringStatus::Reloading || firingStatus == EFiringStatus::OutOfAmmo) return;
 
 	LastFireTime = FPlatformTime::Seconds();
 	auto projectile = GetWorld()->SpawnActor<AProjectile>(
@@ -82,6 +92,7 @@ void UTankAimingComponent::Fire()
 		Barrel->GetProjectileSocketLocation(),
 		Barrel->GetProjectileSocketRotation());
 	projectile->LaunchProjectile(LaunchSpeed);
+	AmmoLeft -= 1;
 }
 
 void UTankAimingComponent::MoveBarrelTowards()
@@ -98,5 +109,6 @@ void UTankAimingComponent::MoveBarrelTowards()
 	if (abs(DeltaRoationYaw) > 180) {
 		DeltaRoationYaw += DeltaRoationYaw > 0 ? -360 : 360;
 	}
+	
 	Turret->Rotate(DeltaRoationYaw);
 }
