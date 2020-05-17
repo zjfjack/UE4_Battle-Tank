@@ -4,53 +4,48 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Projectile.generated.h"
+#include "SprungWheel.generated.h"
 
-class UProjectileMovementComponent;
-class UParticleSystemComponent;
-class URadialForceComponent;
+class UPhysicsConstraintComponent;
+class USphereComponent;
 
 UCLASS()
-class BATTLETANK_API AProjectile : public AActor
+class BATTLETANK_API ASprungWheel : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AProjectile();
+	ASprungWheel();
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
+
+	void AddDrivingForce(float ForceMagnitude);
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-
-	void LaunchProjectile(float speed);
-
 private:
 
-	UProjectileMovementComponent* ProjectileMovementComponent = nullptr;
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	USphereComponent* Wheel = nullptr;
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
-	UStaticMeshComponent* CollisionMesh = nullptr;
+	USphereComponent* Axle = nullptr;
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
-	UParticleSystemComponent* LaunchBlast = nullptr;
+	UPhysicsConstraintComponent* MassWheelConstraint = nullptr;
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
-	UParticleSystemComponent* ImpactBlast = nullptr;
+	UPhysicsConstraintComponent* AxleWheelConstraint = nullptr;
 
-	UPROPERTY(VisibleAnywhere, Category = "Components")
-	URadialForceComponent* ExplosionForce = nullptr;
-	
-	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	float DestroyDelay = 10.f;
+	void SetupConstraint();
 
-	UPROPERTY(EditDefaultsOnly, Category = "Setup")
-	float ProjectileBaseDamage = 20.f;
+	void ApplyForce();
 
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
-	void OnTimerExpire();
+	float TotalForceMagnitudeThisFrame = 0.f;
 };

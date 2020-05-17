@@ -4,6 +4,7 @@
 #include "TankPlayerController.h"
 #include "TankAimingComponent.h"
 #include "Engine/World.h"
+#include "Tank.h"
 
 void ATankPlayerController::BeginPlay()
 {
@@ -34,6 +35,24 @@ void ATankPlayerController::AimTowardsCrosshair()
         AimingComponent->AimAt(HitLocation);
 }
 
+void ATankPlayerController::SetPawn(APawn* InPawn)
+{
+    Super::SetPawn(InPawn);
+    if (InPawn)
+    {
+        auto PossessedTank = Cast<ATank>(InPawn);
+        if (!ensure(PossessedTank)) return;
+
+        // Subscribe our local method to the tank's death event
+        PossessedTank->OnDeath.AddUniqueDynamic(this, &ATankPlayerController::OnPossessedTankDeath);
+    }
+}
+
+void ATankPlayerController::OnPossessedTankDeath()
+{
+    StartSpectatingOnly();
+}
+
 // De-project the screen position of the crosshair to a world direction
 bool ATankPlayerController::GetLookDirection(const FVector2D& ScreenLocation, FVector& OutLookDirection) const
 {
@@ -52,7 +71,7 @@ bool ATankPlayerController::GetLookVectorHitLocation(const FVector& LookDirectio
         HitResult,
         StartLocation,
         EndLocation,
-        ECC_Visibility))
+        ECC_Camera))
     {
         OutHitLocation = HitResult.Location;
         return true;

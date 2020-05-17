@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "TankPlayerControllerInterface.h"
 #include "TankPlayerController.generated.h"
 
 class UTankAimingComponent;
@@ -12,7 +13,7 @@ class UTankAimingComponent;
  * 
  */
 UCLASS()
-class BATTLETANK_API ATankPlayerController : public APlayerController
+class BATTLETANK_API ATankPlayerController : public APlayerController, public TankPlayerControllerInterface
 {
 	GENERATED_BODY()
 
@@ -33,6 +34,11 @@ private:
 
 	// Start the tank moving the barrel so that a shot would hit where the crosshair intersects the world
 	void AimTowardsCrosshair();
+
+	virtual void SetPawn(APawn* InPawn) override;
+
+	UFUNCTION()
+	void OnPossessedTankDeath() override;
 
 	UPROPERTY(EditDefaultsOnly)
 	float CrosshairXLocation = 0.5f;

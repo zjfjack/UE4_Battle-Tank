@@ -20,17 +20,20 @@ public:
 
 	// Max force per track, in Newtons
 	UPROPERTY(EditAnywhere)
-	float TrackMaxDrivingForce = 70000000.f;
+	float TrackMaxDrivingForce = 60000000.f;
 
 private:
 	UTankTrackComponent();
-	virtual void BeginPlay() override;
+	//virtual void BeginPlay() override;
 
-	void ApplySidewayForce();
-	void DriveTrack();
+	TArray<class ASprungWheel*> GetWheels() const;
+
+	//void ApplySidewayForce();
+	//void DriveTrack();
+	void DriveTrack(float CurrentThrottle);
 	
-	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+	/*UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);*/
 
-	float CurrentThrottle = 0.f;
+	//float CurrentThrottle = 0.f;
 };

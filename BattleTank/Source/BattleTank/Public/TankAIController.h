@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "TankPlayerControllerInterface.h"
 #include "TankAIController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class BATTLETANK_API ATankAIController : public AAIController
+class BATTLETANK_API ATankAIController : public AAIController, public TankPlayerControllerInterface
 {
 	GENERATED_BODY()
 	
@@ -19,4 +20,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Setup")
 	float AcceptanceRadius = 3000;
+
+	virtual void SetPawn(APawn* InPawn) override;
+
+	UFUNCTION()
+	void OnPossessedTankDeath() override;
 };
